@@ -3,12 +3,13 @@ import { http } from '../util/http';
 
 //import types
 import { Product } from "../util/models";
+import Link from 'next/link';
 
 type HomeProps = {
   products: Product[]
 }
 
-const Home: NextPage<HomeProps> = ({products}) => {
+const Home: NextPage<HomeProps> = ({ products }) => {
   if (!products) {
     return <div>Loading...</div>; // Render a loading message while products are being fetched
   }
@@ -17,11 +18,11 @@ const Home: NextPage<HomeProps> = ({products}) => {
     <div>
       <h1>Ecommerce Full Cycle</h1>
       <ul>
-      {products.map((product, key) => (
+        {products.map((product, key) => (
           <li key={key}>
-          <label>Name: </label> {product.name}
-          <a href='#'>See</a>
-        </li>
+            <label>Name: </label> {product.name}
+            <Link href={`/products/${product.id}`} passHref>See</Link>
+          </li>
         ))}
       </ul>
     </div>
