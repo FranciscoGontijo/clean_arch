@@ -6,7 +6,7 @@ export type CartContextType = {
     addProduct: (product: Product) => void;
     removeProduct: (product: Product) => void;
     clear: () => void;
-    total: number;
+    total: number | undefined;
 }
 
 const defaultContext: CartContextType = {
@@ -35,7 +35,7 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     }, []);
 
     const total = useMemo(
-        () => products!.reduce((acc, product) => acc + product.price, 0),
+        () => products?.reduce((acc, product) => acc + product.price, 0),
         [products]
     );
 
