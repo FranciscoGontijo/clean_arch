@@ -27,15 +27,13 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     }, []);
 
     useEffect(() => {
-        if (products!) {
-            return;
+        if (products !== null) {
+            localStorage.setItem('products', JSON.stringify(products));
         }
-
-        localStorage.setItem('products', JSON.stringify(products));
-    }, [products])
+    }, [products]);
 
     const addProduct = useCallback((product: Product) => {
-        setProducts((products) => [...products!, product]);
+        setProducts((prevProducts) => (prevProducts ? [...prevProducts, product] : [product]));
     }, []);
 
     const removeProduct = useCallback((product: Product) => {
