@@ -4,6 +4,8 @@ import { http } from '../util/http';
 //import types
 import { Product } from "../util/models";
 import Link from 'next/link';
+import { ListProductUseCase } from '@/@core/application/products/list-products.use-case';
+import { ProductHttpGateway } from '@/@core/infra/gateways/product-http.gateway';
 
 type HomeProps = {
   products: Product[]
@@ -32,36 +34,13 @@ const Home: NextPage<HomeProps> = ({ products }) => {
 export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  try {
-    // Fetch data from the "products" endpoint
-    const response = await http.get('products');
+  const gateway = new ProductHttpGateway(http);
+  const useCase = new ListProductUseCase(gateway);
+  const products = await useCase.execute();
 
-    // Check if the response status is successful (e.g., 200 OK)
-    if (response.status === 200) {
-      const products = response.data; // Assuming the data is in the response's data property
-
-      // Return the fetched products as props
-      return {
-        props: {
-          products,
-        },
-      };
-    } else {
-      // Handle error cases if the API call is not successful
-      console.error('Failed to fetch data:', response.statusText);
-      return {
-        props: {
-          products: [], // Return an empty array or appropriate default value
-        },
-      };
+  return {
+    props: {
+      products: products.map((product) => product.toJSON()),
     }
-  } catch (error) {
-    // Handle network errors or other exceptions that might occur during the API call
-    console.error('Error fetching data:', error);
-    return {
-      props: {
-        products: [], // Return an empty array or appropriate default value
-      },
-    };
   }
 };
